@@ -9,17 +9,23 @@
  * that contains the map. 
  */
 #map {
-  height: 100%;
+  height: calc(100vh - 150px);
+  width: 100%;
 }
 
 /* 
-   * Optional: Makes the sample page fill the window. 
-   */
+ * Optional: Makes the sample page fill the window. 
+ */
 html,
 body {
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+.controls {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
 }
 
 /* [END maps_marker_labels] */
