@@ -3,8 +3,8 @@ let labelIndex = 0;
 
 // Credenciales centralizadas
 const API_CONFIG = {
-    bearer: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDYXJsaXRvc1I1IiwiaWF0IjoxNzQ3MzM4MTY4LCJleHAiOjE3NDc0MjQ1Njh9.x5IjnkqIVHHVk0hx4RQCNFy3sot0c20HWu0CVdXwQWA",
-    apiKey: "6728bd0e-67f0-4235-9f24-02d845a783cb"
+    bearer: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNYW5vbG9HMTEiLCJpYXQiOjE3NDc2OTc4MDQsImV4cCI6MTc0Nzc4NDIwNH0.jVzsaWwz4OIs7XLODh5ppwO5jgJfU1-1vr0zAo48aro",
+    apiKey: "ca2229e6-ccbb-4b7b-a261-51b55818e83e"
 };
 
 // Función para limpiar mensajes anteriores
@@ -18,7 +18,7 @@ async function cargarPersonas() {
     try {
         const personaSelect = document.getElementById('personaSelect');
 
-        const response = await fetch('http://localhost:8082/personas', {
+        const response = await fetch('http://localhost:8080/personas', {
             method: "GET",
             headers: {
                 "Authorization": API_CONFIG.bearer,
@@ -157,16 +157,23 @@ function addAdvancedMarker(location, map, label, esReciente, coordData) {
             window.coordenadasRecientes.push(location);
         }
         // Usar la fecha del objeto coord original si existe, de lo contrario, intentar de coordData
-        const fechaBruta = coordData.fechaRegistro || (coordData.coord && coordData.coord.fechaRegistro);
-        const fechaFormateada = fechaBruta ? formatearFecha(fechaBruta) : 'Sin fecha';
+    const fechaBruta = coordData.fechaRegistro || (coordData.coord && coordData.coord.fechaRegistro);
+    const fechaFormateada = fechaBruta ? formatearFecha(fechaBruta) : null;
 
-        const info = new google.maps.InfoWindow({
-            content: `
-                <strong>${label}</strong><br>
-                ${coordData.direccionMarcador || getDireccionFromCoordData(coordData.coord)}<br>
-                <em>Fecha: ${fechaFormateada}</em>
-            `
-        });
+    // Construir el contenido del InfoWindow
+    let infoContent = `
+    <strong>${label}</strong><br>
+    ${coordData.direccionMarcador || getDireccionFromCoordData(coordData.coord)}
+    `;
+
+    // Añadir la fecha solo si existe
+    if (fechaFormateada) {
+        infoContent += `<br><em>Fecha: ${fechaFormateada}</em>`;
+    }
+
+    const info = new google.maps.InfoWindow({
+        content: infoContent
+    });
 
 
         marker.addListener("gmp-click", () => {
@@ -225,9 +232,9 @@ function getEndpointInfo(selectedEndpoint) {
             throw new Error("Por favor seleccione una persona");
         }
 
-        url = `http://localhost:8082/ubicacion/coordenadas/historial/${personaId}`;
+        url = `http://localhost:8080/ubicacion/coordenadas/historial/${personaId}`;
     } else {
-        url = "http://localhost:8082/ubicacion/coordenadas";
+        url = "http://localhost:8080/ubicacion/coordenadas";
     }
 
     return { url, personaId };
